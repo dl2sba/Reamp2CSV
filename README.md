@@ -25,19 +25,16 @@ Das Skript wird über die Kommandozeile mit drei erforderlichen Parametern aufge
 | `input_file` | Pfad zur Quelldatei im `*.reamp` Format. |
 | `output_file` | Zielpfad für die CSV-Datei. |
 
-Parameter	Beschreibung
-locale	'German' für Komma , oder 'US' für Punkt . als Dezimaltrenner.
-input_file	Pfad zur Quelldatei im *.reamp Format.
-
-output_file	Zielpfad für die CSV-Datei.
 
 ## CSV-Struktur (Output)
 Die erzeugte CSV-Datei verwendet ein Semikolon ; als Trennzeichen und enthält folgende Spalten:
 | Spalte | Beschreibung |
 | :--- | :--- |
-| `locale` | **'German'** für Komma `,` oder **'US'** für Punkt `.` als Dezimaltrenner. |
-| `input_file` | Pfad zur Quelldatei im `*.reamp` Format. |
-| `output_file` | Zielpfad für die CSV-Datei. |
+| `1` | Relative Zeit: In µs seit Beginn der Aufzeichnung |
+| `2` | Absolute Zeit: UTC-Zeitstempel (vollqualifiziert bis µs) |
+| `3` | Kanal 1: Messdaten (Spannung in mV / Strom in µA) |
+| `4` | Kanal 2: (Optional) Zweiter Kanal |
+| `5` | Kanal 3: (Optional) Dritter Kanal |
 
 Relative Zeit: In µs seit Beginn der Aufzeichnung.
 Absolute Zeit: UTC-Zeitstempel (vollqualifiziert bis µs).
