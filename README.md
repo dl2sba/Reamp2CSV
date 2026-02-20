@@ -1,33 +1,17 @@
-# Reamp2CSV
-Simple converter from RigExpert REAMP-file to csv-file.
+# Reamp to CSV Converter
 
-Usage                                                             
-     python scriptName parm1 parm2 parm3
-                                                                  
-     parm1    locale used for number formatting                   
-              'German' for ',' as decimal seperator               
-              'US' for '.' as decimal seperator                   
-     parm2    Input filename in *.reamp format                    
-     parm3    Output filename in CSV-format                       
-              Field seperator is ';'                              
-              Field#                                              
-              1   relative time in µs to start of recording       
-              2   absolute time of recording in UTC               
-                  the time is fully qualifier down to µs          
-              3   first channel in file                           
-              4   second channel in file (optional)               
-              5   third channel in file (optional)                
-                                                                  
-              voltage data is written in mV                       
-              current data is written in µA                       
-                                                                  
- Restrictions:                                                    
-     ChannelMap is not used                                       
-                                                                  
- Import into Excel                                                
-     The timestamp in the file is down to µs resolution.          
-     Excel currently supports only ms resolution for timestamps   
-     To see at least ms in the column, use the custom cell format 
-               'TT.MM.JJJJ hh:mm:ss,000'                          
-                                                                  
- Send comments and bug reports to 'labview@dl2sba.de'             
+Ein Python-Utility zum Konvertieren von Aufzeichnungsdaten aus dem `*.reamp`-Format in standardisierte CSV-Dateien.
+
+## Features
+
+- Unterstützt verschiedene Lokalisierungen für die Zahlenformatierung.
+- Hochpräzise Zeitstempel bis in den Mikrosekundenbereich (µs).
+- Automatisierte Skalierung von Einheiten (Spannung in mV, Strom in µA).
+
+## Installation
+
+Stelle sicher, dass Python auf deinem System installiert ist. Klone das Repository und navigiere in den Ordner:
+
+```bash
+git clone https://github.com
+cd DEIN-REPRO-NAME
