@@ -17,7 +17,6 @@ Stelle sicher, dass Python auf deinem System installiert ist. Klone das Reposito
 Das Skript wird über die Kommandozeile mit drei erforderlichen Parametern aufgerufen:
    python scriptName.py <locale> <input_file> <output_file>
 
-
 ## Parameter
 | Parameter | Beschreibung |
 | :--- | :--- |
@@ -43,5 +42,5 @@ Excel unterstützt nativ derzeit nur eine Zeitauflösung bis in den Millisekunde
 - Wähle Zellen formatieren -> Benutzerdefiniert.
 - Nutze folgendes Format: TT.MM.JJJJ hh:mm:ss,000
 
-##Support
+## Support
 Kommentare und Fehlerberichte kannst du direkt an `labview@dl2sba.de` senden.
