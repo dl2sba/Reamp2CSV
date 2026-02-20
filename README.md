@@ -1,20 +1,17 @@
 # Reamp to CSV Converter
-
-Ein Python-Utility zum Konvertieren von Aufzeichnungsdaten aus dem `*.reamp`-Format in standardisierte CSV-Dateien.
+A Python utility for converting recording data from the `*.reamp` format into standardized CSV files.
 
 ## Features
-
-- Unterstützt verschiedene Lokalisierungen für die Zahlenformatierung.
-- Hochpräzise Zeitstempel bis in den Mikrosekundenbereich (µs).
-- Automatisierte Skalierung von Einheiten (Spannung in mV, Strom in µA).
+- Supports various localizations for number formatting.
+- High-precision timestamps down to the microsecond range (µs).
+- Automated scaling of units (voltage in mV, current in µA).
 
 ## Installation
-
-Stelle sicher, dass Python auf deinem System installiert ist. Klone das Repository und navigiere in den Ordner
-
+Ensure that Python is installed on your system. Clone the repository and navigate to the folder.
 
 ## Verwendung
-Das Skript wird über die Kommandozeile mit drei erforderlichen Parametern aufgerufen:
+The script is called via the command line with three required parameters:
+
    python scriptName.py <locale> <input_file> <output_file>
 
 ## Parameter
