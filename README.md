@@ -15,29 +15,30 @@ The script is called via the command line with three required parameters:
    python scriptName.py <locale> <input_file> <output_file>
 
 ## Parameter
-| Parameter | Beschreibung |
+| Parameter | Description |
 | :--- | :--- |
-| `locale` | **'German'** für Komma `,` oder **'US'** für Punkt `.` als Dezimaltrenner. |
-| `input_file` | Pfad zur Quelldatei im `*.reamp` Format. |
-| `output_file` | Zielpfad für die CSV-Datei. |
+| `locale` | **'German'** für commy `,` or **'US'** für dot `.` decimal seperator |
+| `input_file` | source filename in `*.reamp` format |
+| `output_file` | target filename in `*.reamp` format |
 
 
 ## CSV-Struktur (Output)
-Die erzeugte CSV-Datei verwendet ein Semikolon ; als Trennzeichen und enthält folgende Spalten:
-| Spalte | Beschreibung |
+The generated CSV file uses a semicolon ; as a separator and contains the following columns:
+
+| Column | Description |
 | :--- | :--- |
-| `1` | Relative Zeit: In µs seit Beginn der Aufzeichnung |
-| `2` | Absolute Zeit: UTC-Zeitstempel (vollqualifiziert bis µs) |
-| `3` | Kanal 1: Messdaten (Spannung in mV / Strom in µA) |
-| `4` | Kanal 2: (Optional) Zweiter Kanal |
-| `5` | Kanal 3: (Optional) Dritter Kanal |
+| `1` | Relative time: In µs since the start of recording |
+| `2` | Absolute time: UTC timestamp (fully qualified to µs) |
+| `3` | Channel 1: Measurement data (voltage in mV / current in µA) |
+| `4` | Channel 2: (Optional) Second channel |
+| `5` | Channel 3: (Optional) Third channel |
 
 ## EXCEL-Import
-Excel unterstützt nativ derzeit nur eine Zeitauflösung bis in den Millisekundenbereich (ms). Um die Zeitstempel korrekt anzuzeigen:
-- Öffne die CSV in Excel.
-- Markiere die Spalte mit dem Zeitstempel.
-- Wähle Zellen formatieren -> Benutzerdefiniert.
-- Nutze folgendes Format: TT.MM.JJJJ hh:mm:ss,000
+Excel currently only supports a time resolution down to the millisecond range (ms) natively. To display the timestamps correctly:
+- Open the CSV file in Excel.
+- Select the column with the timestamp.
+- Select Format Cells -> Custom.
+- Use the following format: `DD.MM.YYYY hh:mm:ss,000`
 
 ## Support
-Kommentare und Fehlerberichte kannst du direkt an `labview@dl2sba.de` senden.
+You can send comments and bug reports directly to `labview@dl2sba.de`.
