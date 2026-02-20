@@ -9,7 +9,7 @@ A Python utility for converting recording data from the `*.reamp` format into st
 ## Installation
 Ensure that Python is installed on your system. Clone the repository and navigate to the folder.
 
-## Verwendung
+## Usage
 The script is called via the command line with three required parameters:
 
    python scriptName.py <locale> <input_file> <output_file>
