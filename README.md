@@ -36,17 +36,12 @@ Die erzeugte CSV-Datei verwendet ein Semikolon ; als Trennzeichen und enthält f
 | `4` | Kanal 2: (Optional) Zweiter Kanal |
 | `5` | Kanal 3: (Optional) Dritter Kanal |
 
-Relative Zeit: In µs seit Beginn der Aufzeichnung.
-Absolute Zeit: UTC-Zeitstempel (vollqualifiziert bis µs).
-Kanal 1: Messdaten (Spannung in mV / Strom in µA).
-Kanal 2: (Optional) Zweiter Kanal.
-Kanal 3: (Optional) Dritter Kanal.
-Einschränkung: Die ChannelMap wird derzeit nicht unterstützt.
-Import in Excel
+## EXCEL-Import
 Excel unterstützt nativ derzeit nur eine Zeitauflösung bis in den Millisekundenbereich (ms). Um die Zeitstempel korrekt anzuzeigen:
-Öffne die CSV in Excel.
-Markiere die Spalte mit dem Zeitstempel.
-Wähle Zellen formatieren -> Benutzerdefiniert.
-Nutze folgendes Format: TT.MM.JJJJ hh:mm:ss,000
-Support
-Kommentare und Fehlerberichte kannst du direkt an labview@dl2sba.de senden.
+- Öffne die CSV in Excel.
+- Markiere die Spalte mit dem Zeitstempel.
+- Wähle Zellen formatieren -> Benutzerdefiniert.
+- Nutze folgendes Format: TT.MM.JJJJ hh:mm:ss,000
+
+##Support
+Kommentare und Fehlerberichte kannst du direkt an `labview@dl2sba.de` senden.
