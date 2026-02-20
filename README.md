@@ -10,26 +10,35 @@ Ein Python-Utility zum Konvertieren von Aufzeichnungsdaten aus dem `*.reamp`-For
 
 ## Installation
 
-Stelle sicher, dass Python auf deinem System installiert ist. Klone das Repository und navigiere in den Ordner:
+Stelle sicher, dass Python auf deinem System installiert ist. Klone das Repository und navigiere in den Ordner
 
-```bash
-git clone https://github.com
-cd DEIN-REPRO-NAME
-Verwende Code mit Vorsicht.
 
-Verwendung
+## Verwendung
 Das Skript wird über die Kommandozeile mit drei erforderlichen Parametern aufgerufen:
-bash
-python scriptName.py <locale> <input_file> <output_file>
-Verwende Code mit Vorsicht.
+   python scriptName.py <locale> <input_file> <output_file>
 
-Parameter
+
+## Parameter
+| Parameter | Beschreibung |
+| :--- | :--- |
+| `locale` | **'German'** für Komma `,` oder **'US'** für Punkt `.` als Dezimaltrenner. |
+| `input_file` | Pfad zur Quelldatei im `*.reamp` Format. |
+| `output_file` | Zielpfad für die CSV-Datei. |
+
 Parameter	Beschreibung
 locale	'German' für Komma , oder 'US' für Punkt . als Dezimaltrenner.
 input_file	Pfad zur Quelldatei im *.reamp Format.
+
 output_file	Zielpfad für die CSV-Datei.
-CSV-Struktur (Output)
+
+## CSV-Struktur (Output)
 Die erzeugte CSV-Datei verwendet ein Semikolon ; als Trennzeichen und enthält folgende Spalten:
+| Spalte | Beschreibung |
+| :--- | :--- |
+| `locale` | **'German'** für Komma `,` oder **'US'** für Punkt `.` als Dezimaltrenner. |
+| `input_file` | Pfad zur Quelldatei im `*.reamp` Format. |
+| `output_file` | Zielpfad für die CSV-Datei. |
+
 Relative Zeit: In µs seit Beginn der Aufzeichnung.
 Absolute Zeit: UTC-Zeitstempel (vollqualifiziert bis µs).
 Kanal 1: Messdaten (Spannung in mV / Strom in µA).
