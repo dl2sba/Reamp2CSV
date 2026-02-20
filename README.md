@@ -7,7 +7,7 @@ simple REAMP logger file converter to CSV         Version 1.0
 (c) Dietmar Krause, DL2SBA 2026                   2026-02-20      
                                                                   
 Usage                                                             
-     python scriptName <parm1> <parm2> <parm3>                    
+     python scriptName parm1 parm2 parm3
                                                                   
      parm1    locale used for number formatting                   
               'German' for ',' as decimal seperator               
