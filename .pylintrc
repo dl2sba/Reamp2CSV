@@ -1,0 +1,6 @@
+[FORMAT]
+max-line-length=132
+
+[DESIGN]
+max-locals=30
+max-statements=100
