@@ -34,4 +34,4 @@ Excel currently only supports a time resolution down to the millisecond range (m
   - For German version `TT.MM.JJJJ hh:mm:ss,000`
 
 ## Support
-You can send comments and bug reports directly to `labview@dl2sba.de`.
+You can send comments and bug reports directly vie the issue tracking in github
