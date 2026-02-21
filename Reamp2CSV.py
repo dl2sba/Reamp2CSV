@@ -122,8 +122,7 @@ def process_reamp_data(
                 logging.info(f"samples written.. {numSamples}")
                 logging.info(f"fileLastTS....... {timestampFromIncrement}")
                 logging.info(f"outputfile size.. {os.fstat(outFile.fileno()).st_size}")
-                logging.info(f"                  {datetime.fromtimestamp(
-                        timestampFromIncrement, tz=timezone.utc )}")
+                logging.info(f"                  {datetime.fromtimestamp(timestampFromIncrement, tz=timezone.utc )}")
             logging.info("... bye ...")
 
     except FileNotFoundError as e:
