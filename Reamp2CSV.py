@@ -1,10 +1,13 @@
-# *********************************************************************************
-# ***                                                                           ***
-# ***  Reamp exporter                                                           ***
-# ***                                                                           ***
-# ***  (c) DL2SBA Dietmar Krause 2026                                           ***
-# ***                                                                           ***
-# *********************************************************************************
+"""
+*********************************************************************************
+***                                                                           ***
+***  Reamp exporter                                                           ***
+***                                                                           ***
+***  (c) DL2SBA Dietmar Krause 2026                                           ***
+***                                                                           ***
+*********************************************************************************
+"""
+
 import argparse
 import struct
 import csv
@@ -21,11 +24,6 @@ PARM_TIME_TIMESTAMP = "timestamp"
 PARM_TIME_MICROS = "unix"
 
 
-# *********************************************************************************
-# ***                                                                           ***
-# ***  Exporter                                                                 ***
-# ***                                                                           ***
-# *********************************************************************************
 def process_reamp_data(
     parm_input_path,
     parm_output_path,
@@ -33,7 +31,20 @@ def process_reamp_data(
     parm_encoding,
     parm_time,
 ):
-    num_channels = 0
+    """
+    *********************************************************************************
+    ***                                                                           ***
+    ***  Exporter                                                                 ***
+    ***                                                                           ***
+    *********************************************************************************
+    """
+    """
+    *********************************************************************************
+    ***                                                                           ***
+    ***  Exporter                                                                 ***
+    ***                                                                           ***
+    *********************************************************************************
+    """
     try:
         with open(parm_input_path, "rb") as in_file:
             #
@@ -42,58 +53,58 @@ def process_reamp_data(
             #   process header section
             binary_content = in_file.read(0x200)
 
-            fileVersion = struct.unpack("<h", binary_content[0:2])[0]
-            fileHeaderSize = struct.unpack("<h", binary_content[2:4])[0]
-            fileChannelCount = struct.unpack("B", binary_content[8:9])[0]
-            fileChannelMap = struct.unpack("B", binary_content[9:10])[0]
-            fileSampleTime = (
+            file_version = struct.unpack("<h", binary_content[0:2])[0]
+            file_header_size = struct.unpack("<h", binary_content[2:4])[0]
+            file_channel_count = struct.unpack("B", binary_content[8:9])[0]
+            file_channel_map = struct.unpack("B", binary_content[9:10])[0]
+            file_sample_time = (
                 struct.unpack("<h", binary_content[10:12])[0] / 10
             )  # in ms ticks
-            fileType = struct.unpack("B", binary_content[8:9])[0]
-            fileStartTS = struct.unpack("<Q", binary_content[0x1F8:0x200])[0] / 1000
+            file_type = struct.unpack("B", binary_content[8:9])[0]
+            file_start_ts = struct.unpack("<Q", binary_content[0x1F8:0x200])[0] / 1000
 
-            logging.info(f"fileVersion...... {fileVersion}")
-            logging.info(f"fileHeaderSize... {fileHeaderSize}")
-            logging.info(f"fileChannelCount. {fileChannelCount}")
-            logging.info(f"fileChannelMap... {fileChannelMap}")
-            logging.info(f"fileSampleTime... {fileSampleTime}ms")
-            logging.info(f"fileType......... {fileType}")
-            logging.info(f"fileStartTS...... {fileStartTS}s")
+            logging.info(f"file_version...... {file_version}")
+            logging.info(f"file_header_size... {file_header_size}")
+            logging.info(f"file_channel_count. {file_channel_count}")
+            logging.info(f"file_channel_map... {file_channel_map}")
+            logging.info(f"file_sample_time... {file_sample_time}ms")
+            logging.info(f"file_type......... {file_type}")
+            logging.info(f"file_start_ts...... {file_start_ts}s")
             logging.info(
-                f"                  {datetime.fromtimestamp(fileStartTS, tz=timezone.utc)}"
+                f"                  {datetime.fromtimestamp(file_start_ts, tz=timezone.utc)}"
             )
 
             #   process data records
             with open(
                 parm_output_path, "w", newline="", encoding=parm_encoding
-            ) as outFile:
-                writer = csv.writer(outFile, delimiter=parm_delimiter)
+            ) as out_file:
+                writer = csv.writer(out_file, delimiter=parm_delimiter)
                 writer.writerow(["time", "channel 0", "channel 1", "channel 2"])
 
                 #   detector for end of file
                 #   increments are in ms
-                lastIncrement = -1
+                last_increment = -1
                 increment = 0
-                bytesPerChannel = (fileChannelCount + 1) * 8
-                timestampFromIncrement = ""
-                numSamples = 0
+                bytes_per_channel = (file_channel_count + 1) * 8
+                timestamp_from_increment = ""
+                num_samples = 0
                 #
                 #   read the data lines
                 while True:
                     valueArray = []
                     #   read all data of a sample
-                    sampleRaw = in_file.read(bytesPerChannel)
+                    sample_raw = in_file.read(bytes_per_channel)
                     #   read 8 byte double value
-                    doubleIncrement = struct.unpack("<d", sampleRaw[0:8])[0]
+                    double_increment = struct.unpack("<d", sample_raw[0:8])[0]
                     #   convert to ms
-                    increment = doubleIncrement
+                    increment = double_increment
                     # print(increment)
-                    if increment == lastIncrement:
+                    if increment == last_increment:
                         break
                     else:
-                        lastIncrement = increment
+                        last_increment = increment
 
-                    timestampFromIncrement = fileStartTS + increment
+                    timestamp_from_increment = file_start_ts + increment
 
                     if parm_time == PARM_TIME_RELATIVE:
                         valueArray.append(locale.format_string("%f", increment))
@@ -101,40 +112,42 @@ def process_reamp_data(
                         #   timestamp of current sample in ms
                         valueArray.append(
                             datetime.fromtimestamp(
-                                timestampFromIncrement, tz=timezone.utc
+                                timestamp_from_increment, tz=timezone.utc
                             )
                         )
                     else:
                         #   timestamp of current sample in s
-                        valueArray.append(timestampFromIncrement)
+                        valueArray.append(timestamp_from_increment)
 
-                    for chanNo in range(fileChannelCount):
-                        startIdx = chanNo * 8 + 8
-                        stopIdx = startIdx + 8
-                        chanVal = struct.unpack("<d", sampleRaw[startIdx:stopIdx])[0]
-                        chanValLocale = locale.format_string("%f", chanVal)
-                        valueArray.append(chanValLocale)
+                    for chanNo in range(file_channel_count):
+                        start_idx = chanNo * 8 + 8
+                        stop_idx = start_idx + 8
+                        chan_value = struct.unpack("<d", sample_raw[start_idx:stop_idx])[0]
+                        chan_value_locale = locale.format_string("%f", chan_value)
+                        valueArray.append(chan_value_locale)
                     writer.writerow(valueArray)
-                    if numSamples % 10000 == 0:
-                        logging.info(f"samples written.. {numSamples}")
-                    numSamples += 1
+                    if num_samples % 10000 == 0:
+                        logging.info(f"samples written.. {num_samples}")
+                    num_samples += 1
 
-                logging.info(f"samples written.. {numSamples}")
-                logging.info(f"fileLastTS....... {timestampFromIncrement}")
-                logging.info(f"outputfile size.. {os.fstat(outFile.fileno()).st_size}")
-                logging.info(f"                  {datetime.fromtimestamp(timestampFromIncrement, tz=timezone.utc )}")
+                logging.info(f"samples written.. {num_samples}")
+                logging.info(f"fileLastTS....... {timestamp_from_increment}")
+                logging.info(f"outputfile size.. {os.fstat(out_file.fileno()).st_size}")
+                logging.info(f"                  {datetime.fromtimestamp(timestamp_from_increment, tz=timezone.utc )}")
             logging.info("... bye ...")
 
     except FileNotFoundError as e:
         logging.error(f"Error: File '{e.filename}' not found")
 
 
-# *********************************************************************************
-# ***                                                                           ***
-# ***  Main                                                                     ***
-# ***                                                                           ***
-# *********************************************************************************
 def main():
+    """
+    *********************************************************************************
+    ***                                                                           ***
+    ***  Main                                                                     ***
+    ***                                                                           ***
+    *********************************************************************************
+    """
     logging.basicConfig(
         level=logging.WARNING, format="%(asctime)s - %(levelname)s - %(message)s"
     )
