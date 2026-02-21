@@ -29,7 +29,7 @@ Excel currently only supports a time resolution down to the millisecond range (m
 - Open the CSV file in Excel.
 - Select the column with the timestamp.
 - Select Format Cells -> Custom.
-- Use the following format: `DD.MM.YYYY hh:mm:ss,000`
+- Use the following format: `DD.MM.YYYY hh:mm:ss,000` (English) or `TT.MM.JJJJ hh:mm:ss,000` (German)
 
 ## Support
 You can send comments and bug reports directly to `labview@dl2sba.de`.
