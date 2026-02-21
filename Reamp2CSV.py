@@ -35,9 +35,12 @@ def process_reamp_data(
 ):
     num_channels = 0
     try:
-        with open(parm_input_path, "rb") as f:
+        with open(parm_input_path, "rb") as in_file:
+            #
+            logging.info(f"inputfile size... {os.fstat(in_file.fileno()).st_size}")
+
             #   process header section
-            binary_content = f.read(0x200)
+            binary_content = in_file.read(0x200)
 
             fileVersion = struct.unpack("<h", binary_content[0:2])[0]
             fileHeaderSize = struct.unpack("<h", binary_content[2:4])[0]
@@ -79,7 +82,7 @@ def process_reamp_data(
                 while True:
                     valueArray = []
                     #   read all data of a sample
-                    sampleRaw = f.read(bytesPerChannel)
+                    sampleRaw = in_file.read(bytesPerChannel)
                     #   read 8 byte double value
                     doubleIncrement = struct.unpack("<d", sampleRaw[0:8])[0]
                     #   convert to ms
@@ -112,20 +115,19 @@ def process_reamp_data(
                         chanValLocale = locale.format_string("%f", chanVal)
                         valueArray.append(chanValLocale)
                     writer.writerow(valueArray)
+                    if numSamples % 10000 == 0:
+                        logging.info(f"samples written.. {numSamples}")
                     numSamples += 1
 
-            logging.info(f"fileLastTS....... {timestampFromIncrement}")
-            logging.info(f"                  {datetime.fromtimestamp(
-                            timestampFromIncrement, tz=timezone.utc
-                        )}")
-            logging.info(f"samples written.. {numSamples}")
+                logging.info(f"samples written.. {numSamples}")
+                logging.info(f"fileLastTS....... {timestampFromIncrement}")
+                logging.info(f"outputfile size.. {os.fstat(outFile.fileno()).st_size}")
+                logging.info(f"                  {datetime.fromtimestamp(
+                        timestampFromIncrement, tz=timezone.utc )}")
             logging.info("... bye ...")
 
     except FileNotFoundError as e:
-        logging.error(f"Error: File '{e.filename}' not found", file=sys.stderr)
-
-    except Exception as e:
-        logging.error(f"Ein unerwarteter Fehler ist aufgetreten: {e}", file=sys.stderr)
+        logging.error(f"Error: File '{e.filename}' not found")
 
 
 # *********************************************************************************
@@ -163,7 +165,7 @@ def main():
         "-e",
         "--encoding",
         default="utf-8",
-        help="Encoding of output file (default: 'utf-8')",
+        help="Encoding of output file (default: 'utf-8'). For details check https://docs.python.org/3/library/codecs.html",
     )
 
     # optional verbose
@@ -209,16 +211,16 @@ def main():
         # DEBUG	10
         logging.getLogger().setLevel(20)
 
-    logging.info(f"*********************************************************************************")
-    logging.info(f"***                                                                           ***")
-    logging.info(f"***  Reamp exporter                                                           ***")
-    logging.info(f"***                                                                           ***")
-    logging.info(f"***    Repository  https://github.com/dl2sba/Reamp2CSV                        ***")
-    logging.info(f"***    Homepage    https://dl2sba.com                                         ***")
-    logging.info(f"***                                                                           ***")
-    logging.info(f"***  (c) DL2SBA Dietmar Krause 2026                                           ***")
-    logging.info(f"***                                                                           ***")
-    logging.info(f"*********************************************************************************")
+    logging.info(f"*******************************************************************")
+    logging.info(f"***                                                             ***")
+    logging.info(f"***  Reamp exporter                                             ***")
+    logging.info(f"***                                                             ***")
+    logging.info(f"***    Repository  https://github.com/dl2sba/Reamp2CSV          ***")
+    logging.info(f"***    Homepage    https://dl2sba.com                           ***")
+    logging.info(f"***                                                             ***")
+    logging.info(f"***  (c) DL2SBA Dietmar Krause 2026                             ***")
+    logging.info(f"***                                                             ***")
+    logging.info(f"*******************************************************************")
     logging.info(f"input filename... {input_file_name}")
     logging.info(f"output filename.. {output_file_name}")
     logging.info(f"locale used...... {locale_used}")
@@ -226,11 +228,15 @@ def main():
     logging.info(f"output encoding.. {encoding_used}")
     logging.info(f"time columns .... {time_used}")
 
-    locale.setlocale(locale.LC_ALL, locale_used)
+    try:
+        locale.setlocale(locale.LC_ALL, locale_used)
 
-    process_reamp_data(
-        input_file_name, output_file_name, delimiter_used, encoding_used, time_used
-    )
+        process_reamp_data(
+            input_file_name, output_file_name, delimiter_used, encoding_used, time_used
+        )
+
+    except Exception as e:
+        logging.error(f"Ein unerwarteter Fehler ist aufgetreten: {e}")
 
 
 # *********************************************************************************
