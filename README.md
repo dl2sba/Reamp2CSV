@@ -21,15 +21,17 @@ The generated CSV file uses a semicolon ; as a separator and contains the follow
 | :--- | :--- |
 | `1` | Time formatted according to parameter `--time` |
 | `2` | Channel 1: Measurement data (voltage in mV / current in µA) |
-| `3` | Channel 2: (Optional) Second channel |
-| `4` | Channel 3: (Optional) Third channel |
+| `3` | Channel 2: Optional Second channel (voltage in mV / current in µA)|
+| `4` | Channel 3: Optional Third channel (voltage in mV / current in µA)|
 
 ## EXCEL-Import
 Excel currently only supports a time resolution down to the millisecond range (ms) natively. To display the timestamps correctly:
 - Open the CSV file in Excel.
 - Select the column with the timestamp.
 - Select Format Cells -> Custom.
-- Use the following format: `DD.MM.YYYY hh:mm:ss,000` (English) or `TT.MM.JJJJ hh:mm:ss,000` (German)
+- Use the following format:
+  - For Enlish version `DD.MM.YYYY hh:mm:ss,000`
+  - For German version `TT.MM.JJJJ hh:mm:ss,000`
 
 ## Support
 You can send comments and bug reports directly to `labview@dl2sba.de`.
