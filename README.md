@@ -12,7 +12,7 @@ Ensure that Python is installed on your system. Clone the repository and navigat
 ## Usage
 The script is called via the command line with one required parameter. For a detailled description call the script with the `-h` parameter
 
-usage: reamp2csv.py [-h] [-o OUTPUT] [-l LOCALE] [-e ENCODING] [-v] [-d {,,;}] [-t {unix,relative,timestamp}] input_file
+usage: Reamp2CSV.py [-h] [-d {,,;}] [-e ENCODING] [-l LOCALE] [-o OUTPUT] [-t {unix,relative,timestamp}] [-v] input_file
 
 ## CSV-Struktur (Output)
 The generated CSV file uses a semicolon ; as a separator and contains the following columns:
