@@ -12,7 +12,27 @@ Ensure that Python is installed on your system. Clone the repository and navigat
 ## Usage
 The script is called via the command line with one required parameter. For a detailled description call the script with the `-h` parameter
 
+```
 usage: Reamp2CSV.py [-h] [-d {,,;}] [-e ENCODING] [-l LOCALE] [-o OUTPUT] [-t {unix,relative,timestamp}] [-v] input_file
+
+Converts Reamp-Datafile into CSV-Format.
+
+positional arguments:
+  input_file            filename of *.reamp datafile
+
+options:
+  -h, --help            show this help message and exit
+  -d, --delimiter {,,;}
+                        Value delimiter in CSV-file (default: ;)
+  -e, --encoding ENCODING
+                        Encoding of output file. For details check
+                        https://docs.python.org/3/library/codecs.html (default: utf-8)
+  -l, --locale LOCALE   Locale used for number formatting (default: EN_US)
+  -o, --output OUTPUT   Name of the output file (default: <inputfile>.csv) (default: None)
+  -t, --time {unix,relative,timestamp}
+                        Time column in CSV (default: relative)
+  -v, --verbose         Verbose log output (default: False)
+```
 
 ## CSV-Struktur (Output)
 The generated CSV file uses a semicolon ; as a separator and contains the following columns:
