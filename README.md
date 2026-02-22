@@ -10,7 +10,7 @@ A Python utility for converting recording data from the `*.reamp` format into st
 Ensure that Python is installed on your system. Clone the repository and navigate to the folder.
 
 ## Usage
-The script is called via the command line with three required parameters. For a detailled description call the script with the `-h` parameter
+The script is called via the command line with one required parameter. For a detailled description call the script with the `-h` parameter
 
 usage: reamp2csv.py [-h] [-o OUTPUT] [-l LOCALE] [-e ENCODING] [-v] [-d {,,;}] [-t {unix,relative,timestamp}] input_file
 
