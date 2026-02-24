@@ -13,6 +13,7 @@ import struct
 import csv
 import locale
 import os
+import sys
 import logging
 from datetime import timezone
 from datetime import datetime
@@ -23,7 +24,7 @@ PARM_TIME_TIMESTAMP = "timestamp"
 PARM_TIME_MICROS = "unix"
 DOUBLE_BYTES = 8
 
-LOGGING_CHUNK = 20000
+LOGGING_CHUNK = 10000
 
 
 def process_reamp_data(
@@ -42,7 +43,9 @@ def process_reamp_data(
     """
     with open(parm_input_path, "rb") as in_file:
         #
-        logging.info("inputfile size.....%ld", os.fstat(in_file.fileno()).st_size)
+        logging.info(
+            f"inputfile size.....{os.fstat(in_file.fileno()).st_size:n} bytes",
+        )
 
         #   process header section
         binary_content = in_file.read(0x200)
@@ -75,75 +78,78 @@ def process_reamp_data(
             raise ValueError("Fileversion not supported")
 
         #   process data records
-        with open(
-            parm_output_path, "w", newline="", encoding=parm_encoding
-        ) as out_file:
-            writer = csv.writer(out_file, delimiter=parm_delimiter)
+        #   create output file
+        out_file = open(parm_output_path, "w", newline="", encoding=parm_encoding)
+        writer = csv.writer(out_file, delimiter=parm_delimiter)
 
-            # write csv header
-            writer.writerow(["time", "channel-0", "channel-1", "channel-2"])
+        # write csv header
+        writer.writerow(["time", "channel-0", "channel-1", "channel-2"])
 
-            #   detector for end of file
-            #   increments are in ms
-            last_increment = -1
-            increment = 0
-            bytes_per_channel = (file_channel_count + 1) * DOUBLE_BYTES
-            timestamp_from_increment = ""
-            num_samples = 0
-            #
-            #   read the data lines
-            while True:
-                value_array = []
-                #   read all data of a sample
-                sample_raw = in_file.read(bytes_per_channel)
-                #   read DOUBLE_BYTES byte double value
-                double_increment = struct.unpack("<d", sample_raw[0:DOUBLE_BYTES])[0]
-                #   convert to ms
-                increment = double_increment
-                # print(increment)
-                if increment == last_increment:
-                    break
+        #   detector for end of file
+        #   increments are in ms
+        previous_increment = -1
+        increment = 0
+        bytes_per_channel = (file_channel_count + 1) * DOUBLE_BYTES
+        timestamp_from_increment = ""
+        num_samples = 0
+        #
+        #   read the data lines
+        while True:
+            value_array = []
+            #   read all data of a sample
+            sample_raw = in_file.read(bytes_per_channel)
+            #   read DOUBLE_BYTES byte double value
+            double_increment = struct.unpack("<d", sample_raw[0:DOUBLE_BYTES])[0]
+            #   convert to ms
+            increment = double_increment
+            # print(increment)
+            if increment == previous_increment:
+                break
 
-                last_increment = increment
-                timestamp_from_increment = file_start_ts + increment
+            previous_increment = increment
+            timestamp_from_increment = file_start_ts + increment
 
-                # interpret time column depending on parm_time
-                if parm_time == PARM_TIME_RELATIVE:
-                    value_array.append(locale.format_string("%f", increment))
-                elif parm_time == PARM_TIME_TIMESTAMP:
-                    #   timestamp of current sample in ms
-                    ziel_datum = datetime.fromtimestamp(
-                        timestamp_from_increment, tz=timezone.utc
-                    )
-                    #   force that always microseconds are printed
-                    zeit_string = ziel_datum.isoformat(timespec="microseconds")
-                    value_array.append(zeit_string)
-                else:
-                    #   timestamp of current sample in s
-                    value_array.append(timestamp_from_increment)
+            # interpret time column depending on parm_time
+            if parm_time == PARM_TIME_RELATIVE:
+                value_array.append(locale.format_string("%f", increment))
+            elif parm_time == PARM_TIME_TIMESTAMP:
+                #   timestamp of current sample in ms
+                ziel_datum = datetime.fromtimestamp(
+                    timestamp_from_increment, tz=timezone.utc
+                )
+                #   force that always microseconds are printed
+                zeit_string = ziel_datum.isoformat(timespec="microseconds")
+                value_array.append(zeit_string)
+            else:
+                #   timestamp of current sample in s
+                value_array.append(timestamp_from_increment)
 
-                # process each channel in a row
-                for chan_no in range(file_channel_count):
-                    start_idx = chan_no * DOUBLE_BYTES + DOUBLE_BYTES
-                    stop_idx = start_idx + DOUBLE_BYTES
-                    chan_value = struct.unpack("<d", sample_raw[start_idx:stop_idx])[0]
-                    chan_value_locale = locale.format_string("%f", chan_value)
-                    value_array.append(chan_value_locale)
+            # process each channel in a row
+            for chan_no in range(file_channel_count):
+                start_idx = chan_no * DOUBLE_BYTES + DOUBLE_BYTES
+                stop_idx = start_idx + DOUBLE_BYTES
+                chan_value = struct.unpack("<d", sample_raw[start_idx:stop_idx])[0]
+                chan_value_locale = locale.format_string("%f", chan_value)
+                value_array.append(chan_value_locale)
 
-                writer.writerow(value_array)
+            writer.writerow(value_array)
 
-                # cyclic status update
-                if num_samples % LOGGING_CHUNK == 0:
-                    logging.info("samples written..%d", num_samples)
-                num_samples += 1
+            # one more sample written
+            num_samples += 1
 
-            logging.info("samples written....%d", num_samples)
-            logging.info("fileLastTS.........%s", timestamp_from_increment)
-            logging.info("outputfile size....%d", os.fstat(out_file.fileno()).st_size)
-            logging.info(
-                "                   %s",
-                datetime.fromtimestamp(timestamp_from_increment, tz=timezone.utc),
-            )
+            # cyclic status update
+            if num_samples % LOGGING_CHUNK == 0:
+                logging.info("samples written....%d", num_samples)
+
+        logging.info("samples written....%d", num_samples)
+        logging.info("fileLastTS.........%s", timestamp_from_increment)
+        logging.info(
+            f"outputfile size....{os.fstat(out_file.fileno()).st_size:n} bytes",
+        )
+        logging.info(
+            "                   %s",
+            datetime.fromtimestamp(timestamp_from_increment, tz=timezone.utc),
+        )
         logging.info("... bye ...")
 
 
@@ -155,12 +161,17 @@ def main():
     ***                                                                           ***
     *********************************************************************************
     """
+    # default level is warning, so that the INFO messages are suppressed by default
     logging.basicConfig(
         level=logging.WARNING, format="%(asctime)s - %(levelname)s - %(message)s"
     )
+
     # init Parser
     parser = argparse.ArgumentParser(
-        description="Converts Reamp-Datafile into CSV-Format."
+        description="Converts Reamp-Datafile into CSV-Format. "
+        "In Excel use the following cell format for English version `DD.MM.YYYY hh:mm:ss,000`. "
+        "For German version `TT.MM.JJJJ hh:mm:ss,000`",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     # mandatory parameter input filename
@@ -172,25 +183,27 @@ def main():
         "--delimiter",
         choices=[",", ";"],
         default=";",
-        help="Value delimiter in CSV-file (default: ';')",
+        help="Value delimiter in CSV-file",
     )
     # optional output encoding
     parser.add_argument(
         "-e",
         "--encoding",
         default="utf-8",
-        help="Encoding of output file (default: 'utf-8'). For details check https://docs.python.org/3/library/codecs.html",
+        help="Encoding of output file. For details check https://docs.python.org/3/library/codecs.html",
     )
     # optional locale
     parser.add_argument(
         "-l",
         "--locale",
         default="EN_US",
-        help="Locale used for number formatting (default: 'EN_US')",
+        help="Locale used for number formatting",
     )
     # optional output file name
     parser.add_argument(
-        "-o", "--output", help="Name of the output file (default: <inputfile>.csv)"
+        "-o",
+        "--output",
+        help="Name of the output file. If ommitted, 'inputfile>.csv' is used",
     )
     # optional mode of time column
     parser.add_argument(
@@ -198,7 +211,10 @@ def main():
         "--time",
         choices=[PARM_TIME_MICROS, PARM_TIME_RELATIVE, PARM_TIME_TIMESTAMP],
         default=PARM_TIME_RELATIVE,
-        help=f"Time column in CSV (default: {PARM_TIME_RELATIVE})",
+        help=f"Time column in CSV: "
+        f"{PARM_TIME_MICROS} gives µs since 1900-01-01. "
+        f"{PARM_TIME_RELATIVE} gives increasing µs since start of measurement. "
+        f"{PARM_TIME_TIMESTAMP} gives full timestamp in ISO format with µs resolution",
     )
     # optional verbose
     parser.add_argument(
